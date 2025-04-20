@@ -17,8 +17,6 @@ class Order extends DbModel
             'price' => [DBTypes::FLOAT, DBTypes::NOT_NULL],
             'date_of_creation' => [DBTypes::DATETIME, DBTypes::NOT_NULL],
             'status' => [DBTypes::VARCHAR(50), DBTypes::NOT_NULL],
-            'statuasdasdasds' => [DBTypes::VARCHAR(50)],
-
         ];
     }
 

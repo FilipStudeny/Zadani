@@ -230,9 +230,11 @@ class Router
 
     private static function normalizePath(string $path): string
     {
+        $path = parse_url($path, PHP_URL_PATH);
         $clean = '/' . trim($path, '/');
         return $clean === '/' ? $clean : rtrim($clean, '/');
     }
+
 
     public static function addController(string $prefix, string $controllerClass, array $middleware = []): void
     {

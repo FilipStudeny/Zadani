@@ -1,0 +1,50 @@
+### Get All Order Items (paginated)
+GET http://localhost/order-items?page=1&limit=10
+Accept: application/json
+
+###
+
+### Get Single Order Item by ID
+GET http://localhost/order-items/3
+Accept: application/json
+
+###
+
+### Create New Order Item
+POST http://localhost/order-items
+Content-Type: application/json
+
+{
+  "value": 25.50,
+  "order_id": 2,
+  "name": "Special Deal Item"
+}
+
+
+###
+
+### Update Existing Order Item
+PUT http://localhost/order-items/16
+Content-Type: application/json
+
+{
+  "value": 33.00,
+  "name": "Updated Item Name"
+}
+
+###
+
+### Delete Order Item
+DELETE http://localhost/order-items/16
+Accept: application/json
+
+###
+
+### Assign Existing Order Item to Another Order
+POST http://localhost/order-items/assign
+Content-Type: application/json
+
+{
+  "item_id": 3,
+  "order_id": 3
+}

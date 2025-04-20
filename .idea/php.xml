@@ -20,6 +20,14 @@
       <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="3ef1c26b-8c41-44cf-90e8-d14766d3cef6" timeout="30000" />
     </phpcs_settings>
   </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
   <component name="PhpStan">
     <PhpStan_settings>

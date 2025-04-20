@@ -1,0 +1,41 @@
+### Get All Orders (paginated)
+GET http://localhost/orders?page=1&limit=5
+Accept: application/json
+
+###
+
+### Get Single Order by ID
+GET http://localhost/orders/3
+Accept: application/json
+
+###
+
+### Create New Order
+POST http://localhost/orders
+Content-Type: application/json
+
+{
+  "name": "Sample Order",
+  "amount_in_stock": 199,
+  "price": 99.99,
+  "status": "PENDING"
+}
+
+###
+
+### Update Existing Order
+PUT http://localhost/orders/6
+Content-Type: application/json
+
+{
+  "name": "Updated Order Name",
+  "amount_in_stock": 123,
+  "price": 79.95,
+  "status": "SHIPPED"
+}
+
+###
+
+### Delete Order
+DELETE http://localhost/orders/6
+Accept: application/json

@@ -51,6 +51,14 @@ class Request
     }
 
     /**
+     * Get a specific query parameter or default
+     */
+    public function getQueryParam(string $key, mixed $default = null): mixed
+    {
+        return $_GET[$key] ?? $default;
+    }
+
+    /**
      * Get the POST data from a submitted form
      */
     public function getFormData(): ?array
@@ -166,6 +174,14 @@ class Request
         $uriPath = $this->getURIPath();
 
         return $schemeAndHost && $uriPath ? $schemeAndHost . $uriPath : null;
+    }
+
+    public function getJsonBody(): array
+    {
+        $content = $this->getRequestBody();
+        $decoded = json_decode($content, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
 

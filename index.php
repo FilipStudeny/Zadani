@@ -1,12 +1,22 @@
 <?php
 
-use core\http\Request;
-use core\http\Response;
-use core\Router;
+use Api\Controllers\OrdersController;
+use Infrastructure\Database\DbContext;
+use Infrastructure\Database\IDbContext;
+use Infrastructure\Kiwi\core\http\Request;
+use Infrastructure\Kiwi\core\http\Response;
+use Infrastructure\Kiwi\core\Router;
 
-require_once './Kiwi/core/Router.php';
-require_once './Kiwi/core/http/Request.php';
-require_once './Kiwi/core/http/Response.php';
+require_once './app/Infrastructure/Kiwi/Router.php';
+require_once './app/Infrastructure/Database/DbContext.php';
+require_once './app/Api/Controllers/OrdersController.php';
+
+DbContext::configure('localhost', 'root', 'secret', 'testdb');
+
+Router::bind(IDbContext::class, DbContext::class);
+
+Router::addController('/orders', OrdersController::class);
+
 
 Router::get('/asda', function(Request $req, Response $res) {
     echo "test";

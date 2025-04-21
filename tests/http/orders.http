@@ -5,7 +5,7 @@ Accept: application/json
 ###
 
 ### Get Single Order by ID
-GET http://localhost/orders/3
+GET http://localhost/orders/7
 Accept: application/json
 
 ###
@@ -24,7 +24,7 @@ Content-Type: application/json
 ###
 
 ### Update Existing Order
-PUT http://localhost/orders/6
+PUT http://localhost/orders/7
 Content-Type: application/json
 
 {
@@ -37,5 +37,5 @@ Content-Type: application/json
 ###
 
 ### Delete Order
-DELETE http://localhost/orders/6
+DELETE http://localhost/orders/7
 Accept: application/json

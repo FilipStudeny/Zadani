@@ -8,6 +8,8 @@ class Request
 {
     private $parameters; // ROUTE PARAMETERS
 
+    private ?string $mockJsonBody = null;
+
     public function __construct($parameters)
     {
         $this->parameters = $parameters;
@@ -32,6 +34,25 @@ class Request
             return $this->parameters->passToRoute()[$index] ?? null;
         }
         return null;
+    }
+
+    /**
+     * Set or override a single route parameter
+     */
+    public function setParameter(string $key, mixed $value): void
+    {
+        if (!is_array($this->parameters)) {
+            $this->parameters = [];
+        }
+        $this->parameters[$key] = $value;
+    }
+
+    /**
+     * Set all route parameters at once
+     */
+    public function setParams(array $params): void
+    {
+        $this->parameters = $params;
     }
 
     /**
@@ -127,6 +148,10 @@ class Request
      */
     public function getRequestBody(): false|string
     {
+        if ($this->mockJsonBody !== null) {
+            return $this->mockJsonBody;
+        }
+
         return file_get_contents('php://input');
     }
 
@@ -342,4 +367,11 @@ class Request
 
         return null;
     }
+
+    public function setJsonBody(array $data): void
+    {
+        $this->mockJsonBody = json_encode($data);
+    }
+
+
 }

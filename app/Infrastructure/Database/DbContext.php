@@ -84,6 +84,14 @@ class DbContext implements IDbContext
     private function connect(): void
     {
         try {
+            // Connect to MySQL server without selecting a database
+            $dsnWithoutDb = "mysql:host={$this->host};charset=utf8mb4";
+            $pdo = new PDO($dsnWithoutDb, $this->username, $this->password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            // Check and create the database if it doesn't exist
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS {$this->database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
             $dsn = "mysql:host={$this->host};dbname={$this->database};charset=utf8mb4";
             $this->connection = new PDO($dsn, $this->username, $this->password);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

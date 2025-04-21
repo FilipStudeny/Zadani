@@ -1,0 +1,2 @@
+
+"version":1,"defects":[],"times":{"Tests\\Application\\GetAllOrdersTests::testGetAllOrders_ReturnsInsertedOrders":0.03,"Tests\\Application\\GetAllOrdersTests::testGetAllOrders_WhenNoOrdersExist_ShouldReturnEmptyList":0.007}}

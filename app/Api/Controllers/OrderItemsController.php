@@ -8,8 +8,8 @@ use Infrastructure\Kiwi\core\http\Request;
 use Infrastructure\Kiwi\core\http\Response;
 use Infrastructure\Kiwi\core\http\RouterController;
 
-require_once './app/Infrastructure/Kiwi/core/http/RouterController.php';
-require_once './app/Infrastructure/Kiwi/core/http/HttpMethod.php';
+require_once __DIR__ . '/../../Infrastructure/Kiwi/core/http/RouterController.php';
+require_once __DIR__ . '/../../Infrastructure/Kiwi/core/http/HttpMethod.php';
 
 class OrderItemsController extends RouterController
 {
@@ -19,8 +19,7 @@ class OrderItemsController extends RouterController
         IDbContext $dbContext,
         string     $prefix = '',
         array      $middleware = []
-    )
-    {
+    ) {
         $this->dbContext = $dbContext;
         parent::__construct($prefix, $middleware);
     }
@@ -38,7 +37,7 @@ class OrderItemsController extends RouterController
     public function GetAllOrderItems(Request $req, Response $res)
     {
         $items = $this->dbContext->table('order_items')->select('*')->get();
-        Response::json($items);
+        Response::json($items, Response::HTTP_OK);
     }
 
     public function GetOrderItem(Request $req, Response $res)
@@ -47,10 +46,11 @@ class OrderItemsController extends RouterController
         $item = $this->dbContext->table('order_items')->select('*')->where('id', $id)->get();
 
         if (!$item) {
-            Response::notFound("Order Item #$id not found");
+            Response::json(["error" => "Order Item #$id not found"], Response::HTTP_NOT_FOUND);
+            return;
         }
 
-        Response::json($item[0]);
+        Response::json($item[0], Response::HTTP_OK);
     }
 
     public function CreateOrderItem(Request $req, Response $res)
@@ -61,6 +61,7 @@ class OrderItemsController extends RouterController
         foreach ($required as $field) {
             if (!isset($data[$field])) {
                 Response::json(["error" => "Missing field: $field"], Response::HTTP_BAD_REQUEST);
+                return;
             }
         }
 
@@ -81,7 +82,8 @@ class OrderItemsController extends RouterController
 
         $existing = $this->dbContext->table('order_items')->select('*')->where('id', $id)->get();
         if (!$existing) {
-            Response::notFound("Order Item #$id not found");
+            Response::json(["error" => "Order Item #$id not found"], Response::HTTP_NOT_FOUND);
+            return;
         }
 
         $allowedFields = ['value', 'order_id', 'name'];
@@ -91,9 +93,8 @@ class OrderItemsController extends RouterController
             $this->dbContext->table('order_items')->where('id', $id)->update($updateData);
         }
 
-        Response::json(['message' => 'Order item updated']);
+        Response::json(['message' => 'Order item updated'], Response::HTTP_OK);
     }
-
 
     public function DeleteOrderItem(Request $req, Response $res)
     {
@@ -101,11 +102,12 @@ class OrderItemsController extends RouterController
         $existing = $this->dbContext->table('order_items')->select('*')->where('id', $id)->get();
 
         if (!$existing) {
-            Response::notFound("Order Item #$id not found");
+            Response::json(["error" => "Order Item #$id not found"], Response::HTTP_NOT_FOUND);
+            return;
         }
 
         $this->dbContext->table('order_items')->where('id', $id)->delete();
-        Response::json(['message' => 'Order item deleted']);
+        Response::json(['message' => 'Order item deleted'], Response::HTTP_OK);
     }
 
     public function AssignOrderItemToOrder(Request $req, Response $res)
@@ -114,6 +116,7 @@ class OrderItemsController extends RouterController
 
         if (!isset($data['item_id'], $data['order_id'])) {
             Response::json(["error" => "Missing 'item_id' or 'order_id'"], Response::HTTP_BAD_REQUEST);
+            return;
         }
 
         $this->dbContext

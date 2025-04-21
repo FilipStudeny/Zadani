@@ -53,6 +53,31 @@ class OrderBuilder
         return $this;
     }
 
+    public function getName(): string
+    {
+        return $this->data['name'];
+    }
+
+    public function getStock(): int
+    {
+        return $this->data['amount_in_stock'];
+    }
+
+    public function getPrice(): float
+    {
+        return $this->data['price'];
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->data['date_of_creation'];
+    }
+
+    public function getStatus(): string
+    {
+        return $this->data['status'];
+    }
+
     public function build(): array
     {
         return $this->data;

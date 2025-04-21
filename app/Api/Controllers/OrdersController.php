@@ -8,18 +8,14 @@ use Infrastructure\Kiwi\core\http\Request;
 use Infrastructure\Kiwi\core\http\Response;
 use Infrastructure\Kiwi\core\http\RouterController;
 
-require_once './app/Infrastructure/Kiwi/core/http/RouterController.php';
-require_once './app/Infrastructure/Kiwi/core/http/HttpMethod.php';
+require_once __DIR__ . '/../../Infrastructure/Kiwi/core/http/RouterController.php';
+require_once __DIR__ . '/../../Infrastructure/Kiwi/core/http/HttpMethod.php';
 
 class OrdersController extends RouterController
 {
     private IDbContext $dbContext;
 
-    public function __construct(
-        IDbContext $dbContext,
-        string     $prefix = '',
-        array      $middleware = []
-    )
+    public function __construct(IDbContext $dbContext, string $prefix = '', array $middleware = [])
     {
         $this->dbContext = $dbContext;
         parent::__construct($prefix, $middleware);
@@ -49,7 +45,7 @@ class OrdersController extends RouterController
             'total' => $result['total'],
             'pages' => (int)ceil($result['total'] / $limit),
             'data' => $result['data'],
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function GetOrder(Request $req, Response $res)
@@ -63,15 +59,14 @@ class OrdersController extends RouterController
             ->include('order_items', 'order_id', 'id')
             ->get();
 
-        $order = $orders[0] ?? null;
-
-        if (!$order) {
+        if (empty($orders)) {
             Response::notFound("Order #$orderId not found");
+            return;
         }
 
-        Response::json($order);
-    }
+        Response::json($orders[0], Response::HTTP_OK);
 
+    }
 
     public function CreateOrder(Request $req, Response $res)
     {
@@ -81,18 +76,16 @@ class OrdersController extends RouterController
         foreach ($required as $field) {
             if (!isset($data[$field])) {
                 Response::json(["error" => "Missing field: $field"], Response::HTTP_BAD_REQUEST);
+                return;
             }
         }
-
-        $orderId = $this->dbContext
-            ->table('orders')
-            ->insert([
-                'name' => $data['name'],
-                'amount_in_stock' => $data['amount_in_stock'],
-                'price' => $data['price'],
-                'status' => $data['status'],
-                'date_of_creation' => date('Y-m-d H:i:s')
-            ]);
+        $orderId = $this->dbContext->table('orders')->insert([
+            'name' => $data['name'],
+            'amount_in_stock' => $data['amount_in_stock'],
+            'price' => $data['price'],
+            'status' => $data['status'],
+            'date_of_creation' => date('Y-m-d H:i:s')
+        ]);
 
         Response::json(['id' => $orderId], Response::HTTP_CREATED);
     }
@@ -102,48 +95,35 @@ class OrdersController extends RouterController
         $orderId = $req->getParameter('id');
         $data = $req->getJsonBody();
 
-        $existing = $this->dbContext
-            ->table('orders')
-            ->select('*')
-            ->where('id', $orderId)
-            ->get();
-
-        if (!$existing) {
+        $existing = $this->dbContext->table('orders')->select('*')->where('id', $orderId)->get();
+        if (empty($existing)) {
             Response::notFound("Order #$orderId not found");
+            return;
         }
 
         $allowedFields = ['name', 'amount_in_stock', 'price', 'status'];
         $updateData = array_intersect_key($data, array_flip($allowedFields));
 
         if (!empty($updateData)) {
-            $this->dbContext
-                ->table('orders')
-                ->where('id', $orderId)
-                ->update($updateData);
+            $this->dbContext->table('orders')->where('id', $orderId)->update($updateData);
         }
 
-        Response::json(['message' => 'Order updated']);
+        Response::json(['message' => 'Order updated'], Response::HTTP_OK);
     }
+
 
     public function DeleteOrder(Request $req, Response $res)
     {
         $orderId = $req->getParameter('id');
+        $existing = $this->dbContext->table('orders')->select('*')->where('id', $orderId)->get();
 
-        $existing = $this->dbContext
-            ->table('orders')
-            ->select('*')
-            ->where('id', $orderId)
-            ->get();
-
-        if (!$existing) {
+        if (empty($existing)) {
             Response::notFound("Order #$orderId not found");
+            return;
         }
 
-        $this->dbContext
-            ->table('orders')
-            ->where('id', $orderId)
-            ->delete();
-
-        Response::json(['message' => 'Order deleted']);
+        $this->dbContext->table('orders')->where('id', $orderId)->delete();
+        Response::json(['message' => 'Order deleted'], Response::HTTP_OK);
     }
+
 }
